@@ -10,7 +10,7 @@ public class Node {
 	 * Constructs a new node, pointing to the given memory block.
 	 * 
 	 * @param block
-	 *        the given memory block
+	 *        the given memory 
 	 */
 	public Node(MemoryBlock block) {
 		this.block = block;
