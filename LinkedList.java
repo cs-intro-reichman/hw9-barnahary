@@ -72,49 +72,51 @@ public class LinkedList {
         size++;
     }
 
-    public MemoryBlock getBlock(int index) {
-        return getNode(index).block;
-    }    
-
-    public int indexOf(MemoryBlock block) {
-        Node current = first;
-        for (int i = 0; i < size; i++) {
-            if (current.block.equals(block)) {
-                return i;
-            }
-            current = current.next;
-        }
-        return -1;
-    }
+    public void remove(MemoryBlock block) {
+		if (block == null) {
+			throw new IllegalArgumentException("index must be between 0 and size");
+		}
+		int index = indexOf(block);
+		if (index == -1) {
+			throw new IllegalArgumentException("index must be between 0 and size");
+		}
+		remove(index);
+	}
+	
+	public void remove(int index) {
+		if (index < 0 || index >= size) {
+			throw new IllegalArgumentException("index must be between 0 and size");
+		}
+		remove(getNode(index));
+	}
 
     public void remove(Node node) {
-        if (node == null || size == 0) {
-            return;
-        }
-        if (node == first) {
-            first = first.next;
-            if (size == 1) {
-                last = null;
-            }
-        } else {
-            Node prev = first;
-            while (prev.next != node) {
-                prev = prev.next;
-            }
-            prev.next = node.next;
-            if (node == last) {
-                last = prev;
-            }
-        }
-        size--;
-    }
-
-    public void remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new IllegalArgumentException("index must be between 0 and size");
-        }
-        remove(getNode(index));
-    }
+		if (node == null) {
+			throw new NullPointerException("Null node cannot be removed!");
+		}
+		if (size == 0) {
+			return;
+		}
+		if (node == first) {
+			first = first.next;
+			if (size == 1) {
+				last = null;
+			}
+		} else {
+			Node prev = first;
+			while (prev.next != null && prev.next != node) {
+				prev = prev.next;
+			}
+			if (prev.next == null) {
+				return; // אם לא נמצא
+			}
+			prev.next = node.next;
+			if (node == last) {
+				last = prev;
+			}
+		}
+		size--;
+	}
 
     public void remove(MemoryBlock block) {
         int index = indexOf(block);

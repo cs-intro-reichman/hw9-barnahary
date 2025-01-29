@@ -31,43 +31,42 @@ public class MemorySpace {
      * Allocates a memory block of a requested length (in words). Returns the
      * base address of the allocated block, or -1 if unable to allocate.
      */
-    public int malloc(int length) {        
-        Node current = freeList.getFirst();
-        while (current != null) {
-            MemoryBlock freeBlock = current.block;
-            if (freeBlock.length >= length) {
-                int allocatedAddress = freeBlock.baseAddress;
-                MemoryBlock allocatedBlock = new MemoryBlock(allocatedAddress, length);
-                allocatedList.addLast(allocatedBlock);
-                
-                if (freeBlock.length == length) {
-                    freeList.remove(current);
-                } else {
-                    freeBlock.baseAddress += length;
-                    freeBlock.length -= length;
-                }
-                return allocatedAddress;
-            }
-            current = current.next;
-        }
-        return -1;
-    }
-
+    public int malloc(int length) {
+		Node current = freeList.getFirst();
+		while (current != null) {
+			MemoryBlock freeBlock = current.block;
+			if (freeBlock.length >= length) {
+				int allocatedAddress = freeBlock.baseAddress;
+				MemoryBlock allocatedBlock = new MemoryBlock(allocatedAddress, length);
+				allocatedList.addLast(allocatedBlock);
+	
+				if (freeBlock.length == length) {
+					freeList.remove(current); // הסרה מלאה אם הבלוק בדיוק מתאים
+				} else {
+					freeBlock.baseAddress += length;
+					freeBlock.length -= length;
+				}
+				return allocatedAddress;
+			}
+			current = current.next;
+		}
+		return -1;
+	}
     /**
      * Frees the memory block whose base address equals the given address.
      */
     public void free(int address) {
-        Node current = allocatedList.getFirst();
-        while (current != null) {
-            if (current.block.baseAddress == address) {
-                freeList.addLast(current.block);
-                allocatedList.remove(current);
-                return;
-            }
-            current = current.next;
-        }
-        throw new IllegalArgumentException("Address not found in allocated list.");
-    }
+		Node current = allocatedList.getFirst();
+		while (current != null) {
+			if (current.block.baseAddress == address) {
+				freeList.addLast(current.block);
+				allocatedList.remove(current);
+				return;
+			}
+			current = current.next;
+		}
+		throw new IllegalArgumentException("index must be between 0 and size");
+	}
     
     /**
      * A textual representation of the free list and the allocated list of this memory space.
@@ -80,16 +79,16 @@ public class MemorySpace {
      * Performs defragmentation of this memory space.
      */
     public void defrag() {
-        Node current = freeList.getFirst();
-        while (current != null && current.next != null) {
-            MemoryBlock block1 = current.block;
-            MemoryBlock block2 = current.next.block;
-            if (block1.baseAddress + block1.length == block2.baseAddress) {
-                block1.length += block2.length;
-                freeList.remove(current.next);
-            } else {
-                current = current.next;
-            }
-        }
-    }
+		Node current = freeList.getFirst();
+		while (current != null && current.next != null) {
+			MemoryBlock block1 = current.block;
+			MemoryBlock block2 = current.next.block;
+			if (block1.baseAddress + block1.length == block2.baseAddress) {
+				block1.length += block2.length;
+				freeList.remove(current.next);
+			} else {
+				current = current.next;
+			}
+		}
+	}
 }
